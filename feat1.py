@@ -46,10 +46,10 @@ with mp_pose.Pose(
             # Determine posture
             if angle < 160:
                 posture = "Bad Posture"
-                color = (0, 0, 255)  # Red for bad posture
+                color = (0, 0, 255)  
             else:
                 posture = "Good Posture"
-                color = (0, 255, 0)  # Green for good posture
+                color = (0, 255, 0)  
 
             # Display posture status on the frame
             frame_bgr, _ = put_text_rectangle(frame_bgr, posture, (50, 50), colour_rectangle=color, border=2)
