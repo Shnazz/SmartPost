@@ -8,7 +8,7 @@ mp_drawing: mp.solutions.drawing_utils = mp.solutions.drawing_utils
 mp_pose: mp.solutions.pose = mp.solutions.pose
 
 # Initialize the webcam capture
-webcam: cv2.VideoCapture = cv2.VideoCapture(1)  
+webcam: cv2.VideoCapture = cv2.VideoCapture(0)  
 
 # Create a Pose instance with specified minimum detection and tracking confidence
 with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5) as pose:
