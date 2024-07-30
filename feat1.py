@@ -11,7 +11,7 @@ mp_pose: mp.solutions.pose = mp.solutions.pose
 webcam: cv2.VideoCapture = cv2.VideoCapture(0)  
 
 # Create a Pose instance with specified minimum detection and tracking confidence
-with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5) as pose:
+with mp_pose.Pose(min_detection_confidence = 0.7, min_tracking_confidence = 0.7) as pose:
     while webcam.isOpened():
         # Read a frame from the webcam
         response: bool
