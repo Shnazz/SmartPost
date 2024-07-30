@@ -52,7 +52,7 @@ with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
             angle: float = calculate_angle(a=shoulder, b=elbow, c=wrist)
 
             # Determine the posture based on the angle
-            if angle < 160:
+            if angle < 130:
                 posture: str = "Bad Posture"
                 color: tuple = (0, 0, 255)  # Red color for bad posture
             else:
