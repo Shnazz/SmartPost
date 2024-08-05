@@ -10,6 +10,9 @@ mp_pose: mp.solutions.pose = mp.solutions.pose
 # Initialize the webcam capture
 webcam: cv2.VideoCapture = cv2.VideoCapture(0)  
 
+webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
 # Create a Pose instance with specified minimum detection and tracking confidence
 with mp_pose.Pose(min_detection_confidence = 0.7, min_tracking_confidence = 0.7) as pose:
     while webcam.isOpened():
