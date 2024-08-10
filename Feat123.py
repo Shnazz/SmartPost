@@ -6,7 +6,7 @@ import torch.nn as nn
 import tkinter as tk
 import pygame
 import threading
-
+import os
 class PostureAnalysisModel(nn.Module):
     def __init__(self):
         super(PostureAnalysisModel, self).__init__()
