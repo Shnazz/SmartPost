@@ -90,7 +90,7 @@ def show_bad_posture_popup(message):
     
 
 # Get the directory of the current script
-script_dir = os.path.dirname(os.path.abspath(_file_))
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
 def play_alert_sound():
     sound_path = os.path.join(script_dir, 'data', 'sound.mp3')
