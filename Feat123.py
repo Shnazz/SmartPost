@@ -89,13 +89,16 @@ def show_bad_posture_popup(message):
     label.pack(pady=20)
     
 
-def play_alert_sound():
-    pygame.mixer.music.load()
-    pygame.mixer.music.play(-1)  
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(_file_))
 
+def play_alert_sound():
+    sound_path = os.path.join(script_dir, 'data', 'sound.mp3')
+    pygame.mixer.music.load(sound_path)
+    pygame.mixer.music.play(-1)
 def stop_alert_sound():
     pygame.mixer.music.stop()
-
+    
 # Initialize Tkinter root
 root = tk.Tk()
 root.withdraw()  # Hide the main window
