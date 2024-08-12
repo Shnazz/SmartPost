@@ -83,7 +83,7 @@ def show_bad_posture_popup(message):
     if 'popup' in globals() and popup.winfo_exists():
         return  # Do not create a new pop-up if one already exists
     popup = tk.Toplevel(root)
-    popup.geometry("300x100+500+200")  # Center the popup on the screen
+    popup.geometry("400x100+500+200")  # Center the popup on the screen
     popup.title("Posture Alert")
     label = tk.Label(popup, text=message, font=("Arial", 14))
     label.pack(pady=20)
@@ -110,7 +110,7 @@ model = PostureAnalysisModel()
 pygame.mixer.init()
 
 # Start video capture
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -139,7 +139,7 @@ while cap.isOpened():
             if torso_inclination >= 10:
                 message = "Straighten Your Back"
             elif torso_inclination >= -10:
-                message = "Lean Forward and Straighten Your Back"
+                message = "Lean Back and Straighten Your Back"
                 
                     
 
