@@ -68,16 +68,11 @@ def run():
         if 'popup' in globals() and popup.winfo_exists():
             return
         popup = tk.Toplevel(root)
-        screen_width = popup.winfo_screenwidth()
-        screen_height = popup.winfo_screenheight()
-        x = screen_width - 400
-        y = screen_height - 200
-        popup.geometry(f"310x63+{x}+{y}")
         popup.title("Posture Alert")
-        popup.attributes('-topmost', True)
+        popup.geometry("310x63")
         label = tk.Label(popup, text=message, font=("Arial", 14))
         label.pack(pady=20)
-        root.after(3000, lambda: popup.destroy())
+        popup.after(5000, popup.destroy)  # Automatically destroy popup after 5 seconds
 
     def play_alert_sound():
         sound_path = os.path.join(script_dir, 'data', 'sound.mp3')
@@ -134,7 +129,7 @@ def run():
                     elif time.time() - bad_posture_timer >= popup_delay:
                         bad_posture_shown = True
                         threading.Thread(target=play_alert_sound).start()
-                        root.after(0, lambda: show_bad_posture_popup(message))
+                        show_bad_posture_popup(message)  # Show the message using Tkinter
                 draw_text_with_background(frame, 'Bad Posture', (10, 60), color=(0, 0, 255))
             else:
                 bad_posture_shown = False
@@ -146,9 +141,9 @@ def run():
         cv2.imshow('Posture Analysis', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        root.update()
+
+        root.update()  # Update Tkinter GUI
 
     cap.release()
     cv2.destroyAllWindows()
-    root.destroy()
     pygame.mixer.quit()
