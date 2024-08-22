@@ -1,5 +1,5 @@
 # CapstoneProject
-![Demo-gif](Demo.mp4)
+![Demo-mp4](Demo.mp4)
 
 # Posture Analysis Application
 
@@ -101,4 +101,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-For questions or feedback, please reach out to [azzam_ashari@connect.ite.edu.sg](mailto:azzam_ashari@connect.ite.edu.sg).
+For questions or feedback, please reach out to [shazam110606@gmail.com](mailto: shazam110606@gmail.com).
