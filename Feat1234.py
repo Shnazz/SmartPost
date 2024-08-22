@@ -3,13 +3,13 @@ import mediapipe as mp
 import math as m
 import torch
 import torch.nn as nn
-import tkinter as tk
 import pygame
 import threading
 import os
 import time
+import tkinter as tk
 
-def run():
+def run(camera_index, sound_enabled):
     class PostureAnalysisModel(nn.Module):
         def __init__(self):
             super(PostureAnalysisModel, self).__init__()
@@ -64,6 +64,7 @@ def run():
         cv2.putText(frame, text, (x, y), font, font_scale, color, thickness)
 
     def show_bad_posture_popup(message):
+        # Define global popup and create new popup
         global popup
         if 'popup' in globals() and popup.winfo_exists():
             return
@@ -75,6 +76,8 @@ def run():
         popup.after(5000, popup.destroy)  # Automatically destroy popup after 5 seconds
 
     def play_alert_sound():
+        if not sound_enabled:
+            return  # Do not play sound if disabled
         sound_path = os.path.join(script_dir, 'data', 'sound.mp3')
         pygame.mixer.music.load(sound_path)
         pygame.mixer.music.play(-1)
@@ -103,7 +106,7 @@ def run():
     root.withdraw()
     model = PostureAnalysisModel()
     pygame.mixer.init()
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(camera_index)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
@@ -128,7 +131,7 @@ def run():
                         bad_posture_timer = time.time()
                     elif time.time() - bad_posture_timer >= popup_delay:
                         bad_posture_shown = True
-                        threading.Thread(target=play_alert_sound).start()
+                        threading.Thread(target=play_alert_sound).start()  # Play sound in a separate thread
                         show_bad_posture_popup(message)  # Show the message using Tkinter
                 draw_text_with_background(frame, 'Bad Posture', (10, 60), color=(0, 0, 255))
             else:
