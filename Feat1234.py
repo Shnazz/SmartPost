@@ -70,7 +70,7 @@ def run(camera_index, sound_enabled):
             return
         popup = tk.Toplevel(root)
         popup.title("Posture Alert")
-        popup.geometry("310x63")
+        popup.geometry("610x83")
         label = tk.Label(popup, text=message, font=("Arial", 14))
         label.pack(pady=20)
         popup.after(5000, popup.destroy)  # Automatically destroy popup after 5 seconds
