@@ -101,4 +101,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-For questions or feedback, please reach out to [shazam110606@gmail.com](mailto: shazam110606@gmail.com).
+For questions or feedback, please reach out to [shazam110606@gmail.com](mailto:shazam110606@gmail.com).
