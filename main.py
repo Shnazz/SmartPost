@@ -7,7 +7,7 @@ class PostureAnalysisUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Posture Analysis')
-        self.setGeometry(100, 100, 400, 550)  # Increased height to fit checkbox
+        self.setGeometry(600, 900, 1000, 850)  # Increased height to fit checkbox
 
         # Create and set up UI elements
         self.video_label = QLabel(self)
