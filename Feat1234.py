@@ -64,16 +64,40 @@ def run(camera_index, sound_enabled):
         cv2.putText(frame, text, (x, y), font, font_scale, color, thickness)
 
     def show_bad_posture_popup(message):
-        # Define global popup and create new popup
+    # Define global popup and create new popup
         global popup
         if 'popup' in globals() and popup.winfo_exists():
             return
         popup = tk.Toplevel(root)
         popup.title("Posture Alert")
-        popup.geometry("610x83")
+
+    # Ensure the popup is always on top
+        popup.attributes("-topmost", True)
+
+    # Get screen width and height
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+
+    # Define the width and height of the popup
+        popup_width = 610
+        popup_height = 83
+
+    # Calculate position to place the popup at the bottom right corner
+        x_position = screen_width - popup_width - 10  # 10 pixels from the right edge
+        y_position = screen_height - popup_height - 80  # Adjusted to be 40 pixels from the bottom edge
+
+    # Set the geometry of the popup window
+        popup.geometry(f"{popup_width}x{popup_height}+{x_position}+{y_position}")
+
+    # Configure the window to be non-resizable
+        popup.resizable(False, False)
+
         label = tk.Label(popup, text=message, font=("Arial", 14))
         label.pack(pady=20)
-        popup.after(5000, popup.destroy)  # Automatically destroy popup after 5 seconds
+
+    # Automatically destroy popup after 5 seconds
+        popup.after(5000, popup.destroy)
+
 
     def play_alert_sound():
         if not sound_enabled:
@@ -107,7 +131,7 @@ def run(camera_index, sound_enabled):
     model = PostureAnalysisModel()
     pygame.mixer.init()
     cap = cv2.VideoCapture(camera_index)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1980)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     bad_posture_shown = False
