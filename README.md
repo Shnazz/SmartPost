@@ -1,6 +1,4 @@
 # CapstoneProject
-![Demo-mp4](Demo.mp4)
-
 # Posture Analysis Application
 
 ## Overview
