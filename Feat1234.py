@@ -33,28 +33,7 @@ def run(camera_index, sound_enabled):
             if lm is None:
                 return None
 
-            self.mp_drawing.draw_landmarks(
-                image,
-                lm,
-                self.mp_pose.POSE_CONNECTIONS,
-                self.mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                self.mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-            )
-
-            l_shldr_x = int(lm.landmark[self.lmPose.LEFT_SHOULDER].x * image.shape[1])
-            l_shldr_y = int(lm.landmark[self.lmPose.LEFT_SHOULDER].y * image.shape[0])
-            r_shldr_x = int(lm.landmark[self.lmPose.RIGHT_SHOULDER].x * image.shape[1])
-            r_shldr_y = int(lm.landmark[self.lmPose.RIGHT_SHOULDER].y * image.shape[0])
-            l_ear_x = int(lm.landmark[self.lmPose.LEFT_EAR].x * image.shape[1])
-            l_ear_y = int(lm.landmark[self.lmPose.LEFT_EAR].y * image.shape[0])
-            l_hip_x = int(lm.landmark[self.lmPose.LEFT_HIP].x * image.shape[1])
-            l_hip_y = int(lm.landmark[self.lmPose.LEFT_HIP].y * image.shape[0])
-
-            offset = self.findDistance(l_shldr_x, l_shldr_y, r_shldr_x, r_shldr_y)
-            neck_inclination = self.findAngle(l_shldr_x, l_shldr_y, l_ear_x, l_ear_y)
-            torso_inclination = self.findAngle(l_hip_x, l_hip_y, l_shldr_x, l_shldr_y)
-
-            return offset, neck_inclination, torso_inclination
+            return lm
 
     def draw_text_with_background(frame, text, position, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.9, color=(0, 255, 0), thickness=2, bg_color=(0, 0, 0)):
         text_size, _ = cv2.getTextSize(text, font, font_scale, thickness)
@@ -64,44 +43,35 @@ def run(camera_index, sound_enabled):
         cv2.putText(frame, text, (x, y), font, font_scale, color, thickness)
 
     def show_bad_posture_popup(message):
-    # Define global popup and create new popup
         global popup
         if 'popup' in globals() and popup.winfo_exists():
             return
         popup = tk.Toplevel(root)
         popup.title("Posture Alert")
 
-    # Ensure the popup is always on top
         popup.attributes("-topmost", True)
 
-    # Get screen width and height
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
 
-    # Define the width and height of the popup
         popup_width = 610
         popup_height = 83
 
-    # Calculate position to place the popup at the bottom right corner
-        x_position = screen_width - popup_width - 10  # 10 pixels from the right edge
-        y_position = screen_height - popup_height - 80  # Adjusted to be 40 pixels from the bottom edge
+        x_position = screen_width - popup_width - 10
+        y_position = screen_height - popup_height - 80
 
-    # Set the geometry of the popup window
         popup.geometry(f"{popup_width}x{popup_height}+{x_position}+{y_position}")
 
-    # Configure the window to be non-resizable
         popup.resizable(False, False)
 
         label = tk.Label(popup, text=message, font=("Arial", 14))
         label.pack(pady=20)
 
-    # Automatically destroy popup after 5 seconds
         popup.after(5000, popup.destroy)
-
 
     def play_alert_sound():
         if not sound_enabled:
-            return  # Do not play sound if disabled
+            return
         sound_path = os.path.join(script_dir, 'data', 'sound.mp3')
         pygame.mixer.music.load(sound_path)
         pygame.mixer.music.play(-1)
@@ -136,18 +106,44 @@ def run(camera_index, sound_enabled):
 
     bad_posture_shown = False
     bad_posture_timer = None
-    popup_delay = 2  # Time in seconds before the popup appears
+    popup_delay = 2
 
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
 
-        output = model.forward(frame)
-        if output:
-            offset, neck_inclination, torso_inclination = output
+        lm = model.forward(frame)
+        if lm:
+            l_shldr_x = int(lm.landmark[model.lmPose.LEFT_SHOULDER].x * frame.shape[1])
+            l_shldr_y = int(lm.landmark[model.lmPose.LEFT_SHOULDER].y * frame.shape[0])
+            r_shldr_x = int(lm.landmark[model.lmPose.RIGHT_SHOULDER].x * frame.shape[1])
+            r_shldr_y = int(lm.landmark[model.lmPose.RIGHT_SHOULDER].y * frame.shape[0])
+            l_ear_x = int(lm.landmark[model.lmPose.LEFT_EAR].x * frame.shape[1])
+            l_ear_y = int(lm.landmark[model.lmPose.LEFT_EAR].y * frame.shape[0])
+            l_hip_x = int(lm.landmark[model.lmPose.LEFT_HIP].x * frame.shape[1])
+            l_hip_y = int(lm.landmark[model.lmPose.LEFT_HIP].y * frame.shape[0])
+
+            offset = model.findDistance(l_shldr_x, l_shldr_y, r_shldr_x, r_shldr_y)
+            neck_inclination = model.findAngle(l_shldr_x, l_shldr_y, l_ear_x, l_ear_y)
+            torso_inclination = model.findAngle(l_hip_x, l_hip_y, l_shldr_x, l_shldr_y)
 
             is_bad_posture, message = check_posture(offset, neck_inclination, torso_inclination)
+
+            # Change color based on posture
+            if is_bad_posture:
+                color = (0, 0, 255)  # Red for bad posture
+            else:
+                color = (0, 255, 0)  # Green for good posture
+
+            # Draw landmarks with the updated color
+            model.mp_drawing.draw_landmarks(
+                frame,
+                lm,
+                model.mp_pose.POSE_CONNECTIONS,
+                model.mp_drawing.DrawingSpec(color=color, thickness=2, circle_radius=2),
+                model.mp_drawing.DrawingSpec(color=color, thickness=2, circle_radius=2)
+            )
 
             if is_bad_posture:
                 if not bad_posture_shown:
@@ -155,8 +151,8 @@ def run(camera_index, sound_enabled):
                         bad_posture_timer = time.time()
                     elif time.time() - bad_posture_timer >= popup_delay:
                         bad_posture_shown = True
-                        threading.Thread(target=play_alert_sound).start()  # Play sound in a separate thread
-                        show_bad_posture_popup(message)  # Show the message using Tkinter
+                        threading.Thread(target=play_alert_sound).start()
+                        show_bad_posture_popup(message)
                 draw_text_with_background(frame, 'Bad Posture', (10, 60), color=(0, 0, 255))
             else:
                 bad_posture_shown = False
@@ -169,8 +165,9 @@ def run(camera_index, sound_enabled):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        root.update()  # Update Tkinter GUI
+        root.update()
 
     cap.release()
     cv2.destroyAllWindows()
     pygame.mixer.quit()
+
